@@ -3,12 +3,18 @@ from ananas import PineappleBot, ConfigurationError, hourly, reply
 class AlphaBot(PineappleBot):
 
   def start(self):
-    self.message = "yo"
+    self.mastodon.toot("Online")
 
-  @hourly(minute=37)
+  @hourly(minute=5)
   def say_something(self):
-    self.mastodon.toot(self.message)
+    self.mastodon.toot("It's 5 after somewhere...")
 
   @reply
-  def respond(self, status, user):
-    self.mastodon.toot(f"@{user['acct']}, {self.message}")
+  def respond(self, mention, user):
+    print(mention)
+    print("---")
+    print(user)
+    self.mastodon.toot(f"@{user['acct']}, {mention['content']}")
+
+  def stop(self):
+    self.mastodon.toot("Offline")
