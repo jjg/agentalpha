@@ -1,4 +1,6 @@
 from ananas import PineappleBot, ConfigurationError, hourly, reply
+import markovify
+from bs4 import BeautifulSoup
 
 class AlphaBot(PineappleBot):
 
@@ -11,10 +13,18 @@ class AlphaBot(PineappleBot):
 
   @reply
   def respond(self, mention, user):
-    print(mention)
-    print("---")
-    print(user)
-    self.mastodon.toot(f"@{user['acct']}, {mention['content']}")
+    # Extract the text of the mention
+    soup = BeautifulSoup(mention["content"])
+    mention_string = soup.get_text()
+    print(mention_string)
+    # generate markov model
+    markov_model = markovify.Text(mention_string)
+    # Reply with a generated sentence
+    #print(mention)
+    #print("---")
+    #print(user)
+    #self.mastodon.toot(f"@{user['acct']}, {mention['content']}")
+    self.mastodon.toot(f"@{user['acct']}, {markov_model.make_sentence()}")
 
   def stop(self):
     self.mastodon.toot("Offline")
