@@ -27,7 +27,7 @@ class AgentAlpha(PineappleBot):
     print(mention_string)
 
     # Load the corpus
-    corpus = open("./a.txt","r")
+    corpus = open("./data/a.txt","r")
 
     # generate markov model
     markov_model = markovify.Text(corpus.read() + " " + mention_string)
