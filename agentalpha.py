@@ -2,7 +2,7 @@ from ananas import PineappleBot, ConfigurationError, hourly, reply
 import markovify
 from bs4 import BeautifulSoup
 
-class AlphaBot(PineappleBot):
+class AgentAlpha(PineappleBot):
 
   def start(self):
     self.mastodon.toot("Online")
