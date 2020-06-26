@@ -1,11 +1,11 @@
+import random
 from ananas import PineappleBot, hourly, reply
 
 class AgentLyrics(PineappleBot):
 
     def get_lyric(self):
-        #TODO: Read a random line from the lyric file
-        lyric = "They're fucking with me, subliminally!"
-        return lyric
+        # Read a random line from the lyric file
+        return random.choice(list(open("./data/lyrics.txt")))
 
     def start(self):
         self.mastodon.toot(self.get_lyric())
