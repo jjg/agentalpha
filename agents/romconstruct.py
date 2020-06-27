@@ -1,13 +1,9 @@
-from ananas import PineappleBot, ConfigurationError, reply
+from ananas import PineappleBot, hourly, reply
 import markovify
 
 class ROMConstruct(PineappleBot):
 
-  def start(self):
-    self.mastodon.toot(f"{self.config.name} coming online")
-
-  @reply
-  def respond(self, mention, user):
+  def model_text(self):
 
     # Load the corpus
     with open(self.config.rom_file,"r") as corpus:
@@ -15,11 +11,25 @@ class ROMConstruct(PineappleBot):
         # generate markov model
         markov_model = markovify.Text(corpus.read(), state_size=3)
     
-        # Generate a reply
-        reply_string = markov_model.make_sentence()
+        return markov_model.make_sentence()
+
+  def start(self):
+    self.mastodon.toot(f"{self.config.name} coming online")
+
+    # Say a little somthing to test things out
+    self.mastodon.toot(self.model_text())
+
+  @hourly(minute=35)
+  def hourly_message(self):
+    self.mastodon.toot(self.model_text())
+
+  @reply
+  def respond(self, mention, user):
 
         # Reply with a generated sentence
-        self.mastodon.toot(f"@{user['acct']}, {reply_string}")
+        # TODO: Figure out how to call the API so that this is
+        # a properly-threaded reply
+        self.mastodon.toot(f"@{user['acct']}, {self.model_text()}")
 
   def stop(self):
     self.mastodon.toot(f"{self.config.name} going offline")
