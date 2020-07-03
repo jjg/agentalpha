@@ -1,4 +1,4 @@
-from ananas import PineappleBot, hourly, reply
+from ananas import PineappleBot, interval, reply
 import markovify
 
 class ROMConstruct(PineappleBot):
@@ -14,13 +14,14 @@ class ROMConstruct(PineappleBot):
         return markov_model.make_sentence()
 
   def start(self):
+
     self.mastodon.toot(f"{self.config.name} coming online")
 
     # Say a little somthing to test things out
     self.mastodon.toot(self.model_text())
 
-  @hourly(minute=35)
-  def hourly_message(self):
+  @interval(14400)
+  def regular_message(self):
     self.mastodon.toot(self.model_text())
 
   @reply
